@@ -1,0 +1,828 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Plisky.Diagnostics</name>
+    </assembly>
+    <members>
+        <member name="T:Plisky.Diagnostics.BilgeAlert">
+            <summary>
+            Manages Alert type records for Bilge, that do not go through the traditional trace level selection but are deisgned to push notifications to the monitoring
+            infrastructure irrespective of trace level.
+            </summary>
+        </member>
+        <member name="M:Plisky.Diagnostics.BilgeAlert.Online(System.String)">
+            <summary>
+            Alerting level call to indicate that an application is online and ready to begin processing.  Starts the uptime counter and sends basic telemetry to the
+            trace stream.
+            </summary>
+            <param name="AppName">An identifier for the application</param>
+        </member>
+        <member name="P:Plisky.Diagnostics.BilgeConditionalRoutedBase.IsWriting">
+            <summary>
+            Determines whether this conditional router is actually writing to the stream.
+            </summary>
+        </member>
+        <member name="M:Plisky.Diagnostics.BilgeWriter.InternalDumpSecureString(System.Security.SecureString,System.String,System.String,System.String,System.String,System.Int32)">
+            <summary>
+            Dumps a secure string to the trace structure as a plaintext string.  This is usefull to see your secure
+            strings without causing them to be seen in release code.
+            </summary>
+            <remarks>BE CAREFULL, this could render your entire secure string approach useless.</remarks>
+            <param name="ss">The secure string to dump</param>
+            <param name="message">The message representing the secure string</param>
+            <param name="secondaryMessage">More information relating to the dump</param>
+            <param name="meth">The Method Name</param>
+            <param name="pth">The caller path</param>
+            <param name="ln">The Line Number</param>
+        </member>
+        <member name="M:Plisky.Diagnostics.BilgeWriter.InternalDumpArray(System.Array,System.String,System.Int32,System.String,System.String,System.Int32)">
+            <summary>
+            InternalDumpArray is the fundamental point where array dumping happens.  An array will have its contents
+            walked and those will be written out to the trace stream.
+            </summary>
+            <param name="arr">The array to be examined</param>
+            <param name="limitSearchTo">Stop dumping the array after this many results, if set to -1 the full array will be dumped</param>
+            <param name="message">A context message describing the dump</param>
+            <param name="meth">The Method Name</param>
+            <param name="pth">The caller path</param>
+            <param name="ln">The Line Number</param>
+        </member>
+        <member name="M:Plisky.Diagnostics.BilgeWriter.InternalDumpEnumerable(System.Collections.IEnumerable,System.String,System.String,System.String,System.Int32)">
+            <summary>
+            InternalDumpEnumerable is called from the public facing dump methods to do the actual work.
+            </summary>
+            <param name="ien">Enumerable object</param>
+            <param name="message">Associated Context</param>
+            <param name="meth">The Method Name</param>
+            <param name="pth">The caller path</param>
+            <param name="ln">The Line Number</param>
+        </member>
+        <member name="M:Plisky.Diagnostics.BilgeWriter.InternalDumpException(System.Exception,System.String,System.String,System.String,System.String,System.Int32)">
+            <summary>
+            InternalDumpException is called from the public facing dump exception methods to do the actual work.  It will
+            explore an exception object that is passed to it and dump it to the logging stream.
+            </summary>
+            <param name="ex">An exception to be dumped to the logging stream.</param>
+            <param name="message">A text description of the exception that is being explored</param>
+            <param name="message2">Any further associated information</param>
+            <param name="meth">The Method Name</param>
+            <param name="pth">The caller path</param>
+            <param name="ln">The Line Number</param>
+        </member>
+        <member name="M:Plisky.Diagnostics.BilgeWriter.TranslateTypeNamesToCSharp(System.String)">
+            <summary>
+            Helper function to convert system type names to their C# equivalents.  Used to format output to a c# style
+            although generally unnecessary can help flavour output.
+            </summary>
+            <param name="typeName">The .net typename of the variable to convert.</param>
+            <returns>The c# specific typename corresponding to the .net type</returns>
+        </member>
+        <member name="M:Plisky.Diagnostics.BilgeWriter.InternalDumpHashTable(System.Collections.Hashtable,System.String,System.String,System.Boolean,System.String,System.String,System.Int32)">
+            <summary>
+            InternalDumpHashtable is called to write a hashtable out to the debugging stream.  It can be used internally or is called
+            directly from the public facing DumpHashTable methods. If called internally then internalCall must be true as this will ensure
+            that all info is output with Constants.MOREINFO, and therefore form part of the calling methods output rather than
+            a log in its own right.
+            </summary>
+            <param name="ht">The hashtable that is to be written to the trace stream</param>
+            <param name="contextText">A context string describing the hash table</param>
+            <param name="internalCall">A boolean to flag if method is being called internall i.e. as part of another dump method</param>
+            <param name="secondaryMessage">Further contextual information</param>
+            <param name="meth">The Method Name</param>
+            <param name="pth">The caller path</param>
+            <param name="ln">The Line Number</param>
+        </member>
+        <member name="M:Plisky.Diagnostics.BilgeWriter.InternalDumpStreamAsText(System.IO.Stream,System.Int64,System.Int32,System.String,System.String)">
+            <summary>
+            InternalDumpStreamAsText will read the start of a stream and write out the start to the trace stream assuming that
+            the input stream is in a text format that will be readable.  The position of the stream will be reset.
+            </summary>
+            <param name="stm">the stream to read</param>
+            <param name="startingPosition">The position within the stream from which to start dumping</param>
+            <param name="charsToDump">the number of characters to read</param>
+            <param name="context">A context description for the dump</param>
+            <param name="supportingInformation">Further contextual information</param>
+        </member>
+        <member name="M:Plisky.Diagnostics.BilgeWriter.InternalDumpStreamAsHex(System.IO.Stream,System.Int64,System.Int32,System.String,System.String)">
+            <summary>
+            InternalDumpStreamAsHex will read the start of a stream and write out the start to the trace stream assuming that
+            the input stream is in a binary format.  The stream will be written as a series of bytes which will be placed into
+            the trace stream as hex representations.  The position of the stream will be reset.
+            </summary>
+            <param name="stm">the stream to read</param>
+            <param name="startingPosition">The position within the stream from which to start dumping</param>
+            <param name="charsToDump">the number of characters to read</param>
+            <param name="context">Contextual information for the dump</param>
+            <param name="supportingInformation">Further contextual information</param>
+        </member>
+        <member name="M:Plisky.Diagnostics.BilgeWriter.InternalE(Plisky.Diagnostics.MessageMetadata,System.String)">
+            <summary>
+            The _E function is a method of orverriding the E default behaviour of specifying the method name as the
+            entry point to a block of code.  With _E you can specify a block name, however the corresponding _X function
+            should be used to indicate the end of the block with the same string passed.
+            This method is only present when the DEBUG contiditional is specified
+            </summary>
+            <param name="theMessage">The textual message to enter with</param>
+        </member>
+        <member name="M:Plisky.Diagnostics.BilgeWriter.InternalX(Plisky.Diagnostics.MessageMetadata,System.String)">
+            <summary>
+            The _X method is an override for the X function that allowes the specification of the name of the exit block
+            wtihout allowing it to look up the name of the method to identify the block.  This should only be used in
+            conjunction with the _E function.
+            This method is only present when the DEBUG contiditional is specified
+            </summary>
+            <param name="theMessage">The message to write</param>
+        </member>
+        <member name="M:Plisky.Diagnostics.BilgeWriter.InternalTimeCheckpoint(Plisky.Diagnostics.MessageMetadata,System.String,System.String,System.Boolean)">
+            <summary>
+            InternalTime checkpoint method handles timer start and stop requests
+            </summary>
+            <param name="timerTitle">The instance timer to be used</param>
+            <param name="timerSinkCategory">A generic category to total time for</param>
+            <param name="timerStart">Is this a start or stop timer</param>
+        </member>
+        <member name="M:Plisky.Diagnostics.BilgeWriter.IncludeThisMethodInOutput(System.Diagnostics.TraceLevel)">
+            <summary><para>
+            Called within each trace method to determine whether or not the call should be included within the trace stream.
+            </para></summary>>
+        </member>
+        <member name="M:Plisky.Diagnostics.BilgeWriter.Dump(System.Object,System.String,System.String,System.String,System.Int32)">
+            <summary>
+            Dumps an object into the trace stream, using a series of different approaches for displaying the object depending
+            on the type of the object that is dumped.
+            </summary>
+            <param name="target">The object to be displayed in the trace stream</param>
+            <param name="context">A context string for the trace entry</param>
+        </member>
+        <member name="M:Plisky.Diagnostics.BilgeWriter.TimeStart(System.String,System.String,System.String,System.Int32)">
+            <summary>
+            <para> TimeStart is used for rudementary timing of sections of code.  Time start will write a time start identifier to the
+            trace stream and start an internal timer.  When TimeStop is called for the same timer title then the value of the elapsed
+            time is written to the trace stream.</para><para>
+            The TimeStart method relies on a unique timerTitle to be passed to it.  There can only be one active timerTitle of the same
+            name at any one time.  Each TimeStart(timerTitle) method call must be matched with a TimeStop(timerTitle) method call to ensure
+            that the timing information is writtten to the trace stream.  timerTitles are case sensitive and must be specified exactly.
+            </para><para>
+            This is not a highly effective or accurate profilling mechanism but will suffice for quick timings.
+            </para>
+            </summary>
+            <remarks>
+            <para>This method is dependant on the DEBUG preprosessing identifier.</para>
+            <para>This method has a Trace level of Verbose.</para>
+            </remarks>
+            <exception cref="T:System.ArgumentNullException">Thrown when timerTitle is null or a zero length string.</exception>
+            <param name="timerTitle">The unique title for the timer that is being started.</param>
+        </member>
+        <member name="M:Plisky.Diagnostics.BilgeWriter.TimeStart(System.String,System.String,System.String,System.String,System.Int32)">
+            <summary>
+            <para> TimeStart is used for rudementary timing of sections of code.  Time start will write a time start identifier to the
+            trace stream and start an internal timer.  When TimeStop is called for the same timer title then the value of the elapsed
+            time is written to the trace stream.</para><para>
+            The TimeStart method relies on a unique timerTitle to be passed to it.  There can only be one active timerTitle of the same
+            name at any one time.  Each TimeStart(timerTitle) method call must be matched with a TimeStop(timerTitle) method call to ensure
+            that the timing information is writtten to the trace stream.  timerTitles are case sensitive and must be specified exactly.
+            </para><para>
+            This is not a highly effective or accurate profilling mechanism but will suffice for quick timings.
+            </para>
+            </summary>
+            <remarks>
+            <para>This method is dependant on the DEBUG preprosessing identifier.</para>
+            <para>This method has a Trace level of Verbose.</para>
+            </remarks>
+            <exception cref="T:System.ArgumentNullException">Thrown when timerTitle is null or a zero length string.</exception>
+            <param name="timerTitle">The unique title for the timer that is being started.</param>
+            <param name="timerCategoryName">A category describing a collection of related timings.</param>
+        </member>
+        <member name="M:Plisky.Diagnostics.BilgeWriter.TimeStop(System.String,System.String,System.String,System.Int32)">
+            <summary>
+            <para> TimeStop will take a corresponding TimeStart entry and record the difference in milliseconds between the TimeStart and
+            TimeStop method calls.  The results of this along with the start and stop times will then be written to the debugging stream.</para>
+            <para> The TimeStop method requires that it is called with a timerTitle parameter that matches exactly a timerTitle that has
+            already been passed to a TimeStart method call. timerTitles are case sensitive and must be specified exactly.
+            </para><para>
+            This is not a highly effective or accurate profilling mechanism but will suffice for quick timings.
+            </para>
+            </summary>
+            <remarks>
+            <para>This method is dependant on the TRACE preprosessing identifier.</para>
+            <para>This method has a Trace level of Verbose.</para>
+            </remarks>
+            <exception cref="T:System.ArgumentNullException">Thrown when timerTitle is null or a zero length string.</exception>
+            <param name="timerTitle">The unique title for the timer that is being started.</param>
+            <param name="meth">The Method Name</param>
+            <param name="pth">The caller path</param>
+            <param name="ln">The Line Number</param>
+        </member>
+        <member name="M:Plisky.Diagnostics.BilgeWriter.TimeStop(System.String,System.String,System.String,System.String,System.Int32)">
+            <summary>
+            <para> TimeStop will take a corresponding TimeStart entry and record the difference in milliseconds between the TimeStart and
+            TimeStop method calls.  The results of this along with the start and stop times will then be written to the debugging stream.</para>
+            <para> The TimeStop method requires that it is called with a timerTitle parameter that matches exactly a timerTitle that has
+            already been passed to a TimeStart method call. timerTitles are case sensitive and must be specified exactly.
+            </para><para>
+            This is not a highly effective or accurate profilling mechanism but will suffice for quick timings.
+            </para>
+            </summary>
+            <remarks>
+            <para>This method is dependant on the TRACE preprosessing identifier.</para>
+            <para>This method has a Trace level of Verbose.</para>
+            </remarks>
+            <exception cref="T:System.ArgumentNullException">Thrown when timerTitle is null or a zero length string.</exception>
+            <param name="timerTitle">The unique title for the timer that is being started.</param>
+            <param name="timerCategoryName">A category describing a collection of related timings.</param>
+            <param name="meth">The Method Name</param>
+            <param name="pth">The caller path</param>
+            <param name="ln">The Line Number</param>
+        </member>
+        <member name="M:Plisky.Diagnostics.BilgeWriter.EnterSection(System.String,System.String,System.String,System.Int32)">
+            <summary>
+            The enter section method marks a section of debugging code into a descreet block.  Sections are marked on a per
+            thread basis and can be used by viewers or by Tex to alter the trace output.
+            </summary>
+            <remarks><para>While it should be possible to disable output by section this is not implemented yet
+            either in Tex or in any of the shipped viewers , including mex.</para>
+            <para>This method is dependant on the TRACE preprosessing identifier.</para>
+            </remarks>
+            <param name="sectionName">The friendly name of the secion</param>
+            <param name="meth">The Method Name</param>
+            <param name="pth">The caller path</param>
+            <param name="ln">The Line Number</param>
+        </member>
+        <member name="M:Plisky.Diagnostics.BilgeWriter.LeaveSection(System.String,System.String,System.Int32)">
+            <summary>
+            The exit section method marks the termination of a section of code.  Section enter and exit blocks are used by viewers
+            to determine which parts of the code to view at once.
+            </summary>
+            <remarks>Disabling output per section not implemented yet
+            <para>This method is dependant on the TRACE preprosessing identifier.</para>
+            </remarks>
+        </member>
+        <member name="M:Plisky.Diagnostics.BilgeWriter.E(System.String,System.String,System.String,System.Int32)">
+            <summary>
+            The E override to provide a string will replace the automatically generated method name with the string that you
+            provide in the first parameter.
+            </summary>
+            <remarks><para>This method is dependant on the TRACE preprosessing identifier.</para></remarks>
+            <param name="entryContext">The name of the block being entered</param>
+        </member>
+        <member name="M:Plisky.Diagnostics.BilgeWriter.X(System.String,System.String,System.String,System.Int32)">
+            <summary>
+            The X override is the indicator for leaving a block that has been entered with E.
+            </summary>
+            <remarks><para>This method is dependant on the TRACE preprosessing identifier.</para></remarks>
+        </member>
+        <member name="T:Plisky.Diagnostics.ConfigSettings">
+            <summary>
+            Current active configuration applied to the various writers.  Holds context data as well as the current trace level etc.
+            </summary>
+        </member>
+        <member name="M:Plisky.Diagnostics.Listeners.SimpleTraceFileHandler.#ctor(System.String,System.Boolean)">
+            <summary>
+            This will create a simple text file listener designed for reading by a person, not for importing into
+            a trace reader.
+            </summary>
+            <param name="pathForLog">The directory to place the file in (Defaults to %TEMP%)</param>
+            <param name="overwriteEachTime">If set to true the same filename will be used, if false the current time will be appended</param>
+        </member>
+        <member name="M:Plisky.Diagnostics.Listeners.LegacyFlimFlamFormatter.MakeManyStrings(System.String,System.Int32)">
+            <summary>
+            This will take a single long string and return it as a series of truncated strings with the length that is
+            specified in theLength parameter used to do the chopping up.  There is nothing clever or special about this
+            routine it does not break on words or aynthing like that.
+            </summary>
+            <param name="theLongString">The string that is to be chopped up into smaller strings</param>
+            <param name="theLength">The length at which the smaller strings are to be created</param>
+            <returns></returns>
+        </member>
+        <member name="T:Plisky.Diagnostics.QueuedBilgeRouter">
+            <summary>
+            BilgeRouter acts as a central point taking all of the inputs from the Bilge/BilgeWriter combinations and routing them through
+            a static queue of messages that is handled by a dedicated thread.  Bilge2 no longer allows for non queued messages and therefore
+            all messages will be queued here priort to being passed to the handlers.
+            </summary>
+        </member>
+        <member name="M:Plisky.Diagnostics.QueuedBilgeRouter.TriggerQueueWrite">
+            <summary>
+            Called to write out the messages that are queued.
+            </summary>
+        </member>
+        <member name="P:Plisky.Diagnostics.Bilge.CurrentTraceLevel">
+            <summary>
+            BACKCOMPAT - Legacy Method For Compatibility - Gets or Sets the current level for tracing - this will use the TraceLevel enum to determine which of the logging functions
+            will write data out.  The order of increasing data is off, error, warning, info, verbose.
+            </summary>
+            <exception cref="T:System.ArgumentException">Thrown if the trace level is set outside of the defined ranges.</exception>
+        </member>
+        <member name="P:Plisky.Diagnostics.Bilge.ActiveTraceLevel">
+            <summary>
+            Establishes the active trace level, using a SourceLevel.  Passing a source leve to this sets the trace level for this instance of Bilge.
+            </summary>
+        </member>
+        <member name="M:Plisky.Diagnostics.Bilge.SetConfigurationResolver(System.Func{System.String,System.Diagnostics.SourceLevels,System.Diagnostics.SourceLevels})">
+            <summary>
+            Sets up a configuraiton resolver that is called for every new instance of Bilge.  This will be called with the instance name
+            and the current trace level of the instance.  The return is your new desireds trace level.  This can be used to turn on logging
+            based on configuration or any other external factor with minimal impact on your code base.
+            </summary>
+            <param name="configurationResolver"></param>
+        </member>
+        <member name="M:Plisky.Diagnostics.Bilge.ClearConfigurationResolver">
+            <summary>
+            Removes the static configuration resolver to ensure that resolution returns to the default.  Note any instances that have been
+            configured by the resolver will remain configured.  This clear will only affect new instances.
+            </summary>
+        </member>
+        <member name="M:Plisky.Diagnostics.Bilge.ConvertTraceLevel(System.Diagnostics.TraceLevel)">
+            <summary>
+            Converts a TraceLevel into a SourceLevels, to allow you to continue to use old code that supports trace levels and work with the change to source
+            levels within Bilge, used by the legacy support for CurrentTraceLevel.
+            </summary>
+            <param name="value">The TraceLevel to use</param>
+            <returns>Opinionated conversion to SourceLevel.</returns>
+        </member>
+        <member name="M:Plisky.Diagnostics.Bilge.#ctor(System.String,System.String,System.Diagnostics.SourceLevels,System.Boolean)">
+            <summary>
+            Bilge provides developer level trace to provide runtime diagnostics to developers.  
+            </summary>
+            <param name="selectedInstanceContext">The context for this particular instance of bilge, usually used to identify a subsystem</param>
+            <param name="sessionContext">The context for a session, usually used to identify the user request</param>
+            <param name="tl">The trace level to set this instance of bilge to</param>
+            <param name="resetDefaults">Reset all pf the internal context of Bilge</param>
+        </member>
+        <member name="P:Plisky.Diagnostics.Bilge.Alert">
+            <summary>
+            Provides alerting, specific methods for alerting, writes to the stream irrespective of the trace level.  Most slowdown elements are disabled
+            and specific method types are provided for alerting, such as applicaiton online, offline etc.  
+            </summary>
+        </member>
+        <member name="P:Plisky.Diagnostics.Bilge.Util">
+            <summary>
+            Provies access to Bilge Utility functions and debugging and diagnostic helper methods.
+            </summary>
+        </member>
+        <member name="P:Plisky.Diagnostics.Bilge.Info">
+            <summary>
+            Informational logging, designed for program flow and basic debugging.  Provides a good detailed level of logging without going into
+            immense details.
+            </summary>
+        </member>
+        <member name="P:Plisky.Diagnostics.Bilge.Verbose">
+            <summary>
+            The fullest level of most detailed logging, includes additional data and secondary messages to really help get detailed information on
+            the execution of the code. This is the most detailed and therefore slowest level of logging.
+            </summary>
+        </member>
+        <member name="P:Plisky.Diagnostics.Bilge.Warning">
+            <summary>
+            Allows warning level logging, used for concerning elements of the code that do not necesarily result in errors.  
+            </summary>
+        </member>
+        <member name="P:Plisky.Diagnostics.Bilge.Error">
+            <summary>
+            Errors that are recoverable from, indicates non fatal problems in the code execution paths.
+            </summary>
+        </member>
+        <member name="P:Plisky.Diagnostics.Bilge.Critical">
+            <summary>
+            Fatal log events, the program is in a bad state and about to terminate or should be terminated.  The critical logging levels are designed to give
+            an overview of why a program failed.
+            </summary>
+        </member>
+        <member name="P:Plisky.Diagnostics.Bilge.Assert">
+            <summary>
+            Provides assertion capabilities, runtime checks that should only really be performed during development builds or to validate that something which
+            should be handled elsewhere in code has really been handled.
+            </summary>
+        </member>
+        <member name="P:Plisky.Diagnostics.Bilge.Direct">
+            <summary>
+            Provides direct writing to the output debug stream using your own values for methods.  This always writes, irrespective of the trace level
+            but it is sitll subject to settings such as write on fail and queueing.
+            </summary>
+        </member>
+        <member name="M:Plisky.Diagnostics.Bilge.GetDiagnosticStatus">
+            <summary>
+            This method returns a string describing the current internal logging status of Bilge.  If there is no output going to your chosen
+            listener then this method can help track down what is wrong.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Plisky.Diagnostics.Bilge.FlushAndShutdown(System.Boolean)">
+            <summary>
+            This method shuts down bilge but it is the only way to be sure that all of your messages have left the
+            internal queuing system.  Once this method has run Bilge is completely broken and no more trace can be
+            written, therefore it should only be used when a process is exiting and you still want to keep all off
+            the trace messages - for example during a console program.
+            </summary>
+            <remarks>It is possible to reinitialise with reinit=true, but this is not recommended.</remarks>
+        </member>
+        <member name="M:Plisky.Diagnostics.Bilge.AddHandler(Plisky.Diagnostics.IBilgeMessageHandler,Plisky.Diagnostics.HandlerAddOptions)">
+            <summary>
+            Adds a Handler based on the handler options - handler options can either check for matching types, or matching names, and can 
+            refuse to add if a matching type or name is added.  Default is to allow as many duplicate handlers as you wish.
+            </summary>
+            <param name="ibmh">The handler to add</param>
+            <param name="hao">The approach to take with duplicates</param>
+            <returns></returns>
+        </member>
+        <member name="M:Plisky.Diagnostics.Bilge.GetHandlers(System.String)">
+            <summary>
+            Gets all of the message handlers with some very basic filtering capability, this is not usually required by most implementations but can
+            be useful when allowing for things like dynamic configuration of message handlers.  The filter string can either start or end with an  *
+            to indicate that the name should be an exact match (no *) or end with (*text) or start with (text*) a matching text filter.
+            </summary>
+            <param name="filter"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Plisky.Diagnostics.TraceCommandTypes">
+            <summary>
+            Trace Command Types - represent all of the possible command types that can be issued as a trace command.
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.TraceCommandTypes.LogMessage">
+            <summary>
+            Standard Log Messages
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.TraceCommandTypes.LogMessageVerb">
+            <summary>
+            Verbose Log Messages
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.TraceCommandTypes.LogMessageMini">
+            <summary>
+            Minimal Log Messages
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.TraceCommandTypes.InternalMsg">
+            <summary>
+            Internal Messages
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.TraceCommandTypes.TraceMessageIn">
+            <summary>
+            Trace Messages, Enter
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.TraceCommandTypes.TraceMessageOut">
+            <summary>
+            Trace Messages, Exit
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.TraceCommandTypes.TraceMessage">
+            <summary>
+            Trace Messages - Other
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.TraceCommandTypes.AssertionFailed">
+            <summary>
+            Assertion Failure
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.TraceCommandTypes.MoreInfo">
+            <summary>
+            Further Details to an existing message
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.TraceCommandTypes.CommandOnly">
+            <summary>
+            Trace Display Commands Only
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.TraceCommandTypes.ErrorMsg">
+            <summary>
+            Errors
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.TraceCommandTypes.WarningMsg">
+            <summary>
+            Warnings
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.TraceCommandTypes.ExceptionBlock">
+            <summary>
+            Exception Block OF Info
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.TraceCommandTypes.ExceptionData">
+            <summary>
+            Exception Meta Data
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.TraceCommandTypes.ExcStart">
+            <summary>
+            Exception Block Start
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.TraceCommandTypes.ExcEnd">
+            <summary>
+            Exception Block End
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.TraceCommandTypes.SectionStart">
+            <summary>
+            Section Start
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.TraceCommandTypes.SectionEnd">
+            <summary>
+            Section End
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.TraceCommandTypes.ResourceEat">
+            <summary>
+            Resource Consumption - Developer Trace
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.TraceCommandTypes.ResourcePuke">
+            <summary>
+            Resource Release - Developer Trace
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.TraceCommandTypes.ResourceCount">
+            <summary>
+            Resource Current Value - Developer Trace
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.TraceCommandTypes.Standard">
+            <summary>
+            Standard Message Type
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.TraceCommandTypes.CommandXML">
+            <summary>
+            XML Formattted Command Message
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.TraceCommandTypes.Custom">
+            <summary>
+            Custom and Third party messages
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.TraceCommandTypes.Alert">
+            <summary>
+            Alerting and Notification
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.TraceCommandTypes.Unknown">
+            <summary>
+            Unknown, error or invalid configuration.
+            </summary>
+        </member>
+        <member name="T:Plisky.Diagnostics.KnownCommand">
+            <summary>
+            Known Commands represent commands that can be sent directly to the viewer
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.KnownCommand.IncreaseIndent">
+            <summary>
+            Tell the viewer to increase the indent level on the following outputs
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.KnownCommand.DecreaseIndent">
+            <summary>
+            Tell the viewer to decrease the indent level on the following outputs
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.KnownCommand.PurgeAll">
+            <summary>
+            Tell the viewer to remove all curent trace data from its store
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.KnownCommand.PurgeCurrent">
+            <summary>
+            Tell the viewer to remove all current trace data for thsi current process from its store
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.KnownCommand.DoNotLeaveLine">
+            <summary>
+            Tell the viewer not to leave a line between this entry and the next entry.
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.KnownCommand.StartFilteringEvents">
+            <summary>
+            Tells the viewer to start ignoring all messages after this one
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.KnownCommand.StopFilteringEvents">
+            <summary>
+            Tells the viewer to stop ignoring all messages after this one
+            </summary>
+        </member>
+        <member name="T:Plisky.Diagnostics.TraceCommands">
+            <summary>
+            Trace commands represents further information about the trace commands themselvers
+            </summary>
+        </member>
+        <member name="M:Plisky.Diagnostics.TraceCommands.TraceCommandToReadableString(Plisky.Diagnostics.TraceCommandTypes)">
+            <summary>
+            This will take the trace command enum and turn each of the valid entries into a readable string that is suitable
+            to be printed on the screen or displayed to the user.
+            </summary>
+            <param name="tct">The trace command types enum selected and valid value</param>
+            <returns>string representing that value</returns>
+        </member>
+        <member name="M:Plisky.Diagnostics.TraceCommands.ReadableStringToTraceCommand(System.String)">
+            <summary>
+            This will take the trace command enum and turn each of the valid entries into a readable string that is suitable
+            to be printed on the screen or displayed to the user.
+            </summary>
+            <param name="tcstring">The trace command types enum selected and valid value</param>
+            <returns>string representing that value</returns>
+        </member>
+        <member name="T:Plisky.Diagnostics.Constants">
+            <summary>
+            Class holding all of the constants that are used by the trace program.
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.Constants.SECONDARYSTRINGSEPARATOR">
+            <summary>
+            When two messages are passed into a trace string they are separated like this for sending.
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.Constants.DEPTHPROTECTION">
+            <summary>
+            Loops that are based on recursion have depth protection enabled so that an assign innter to outer style
+            nastyness does not break.  The output will be very ugly but it will be better to a stackoverflow
+            excepiton, or nasty infinite looping thing.
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.Constants.EVIDENCENAMELENGTH">
+            <summary>
+            there is a limit to display text, this is most prevalant in evidence names which are built up from type names
+            and therefore can easily exceed the length that they are sposed to be at.  This just visciously truncates them
+            at that length.
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.Constants.EXCEPTIONENDTAG">
+            <summary>
+            public identifier to mark the end of an exception set of log messages
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.Constants.CMD_INCREASEINDENT">
+            <summary>
+            Command string to increase the indent of the viewer that is attached
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.Constants.CMD_DECREASEINDENT">
+            <summary>
+            Command string to decrease the indent of the viewer that is attached
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.Constants.CMD_DONTLEAVELINE">
+            <summary>
+            Command string to indicate to the viewer that no line should be left between this statement and the next
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.Constants.CMD_CAUSEPURGEINCURRENT">
+            <summary>
+            Command string for the viewer to indicate that a purge of the current process should be performed
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.Constants.CMD_CAUSEGLOBALPURGE">
+            <summary>
+            Command string for the viewer to indicate that a global purge should be performed
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.Constants.TRUNCATE_DATAENDMARKER">
+            <summary>
+            The truncate data end marker identifies where the end of the data that is associated with the truncation happens and therefore
+            where the start of the actual truncated data begins.  Immediately following the last # the data begins.
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.Constants.MESSAGETRUNCATE">
+            <summary>
+            The message truncate marker is placed at the start of truncation messages and at the end of messages that expect another message
+            to follow them containing truncate data.  This had to be more uniqued up as we search for it now that it is no longer able to be
+            used just as a start and the end of a string.  This is mostly used for pulling out the unqiue identifier that is used to join strings back
+            together in the viewer.
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.Constants.ODSLISTNER_NAME">
+            <summary>
+            The name of the specific Output debug string listener
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.Constants.FILELISTNER_NAME">
+            <summary>
+             The name of the external text writer listener
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.Constants.DEFLISTNER_NAME">
+            <summary>
+            The name for the default listener
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.Constants.ORIGINALLISTENER_NAME">
+            <summary>
+            The name for the VS.Net 2003 default listener
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.Constants.NFI">
+            <summary>
+            The internal string used when no further infromation is available.
+            </summary>
+        </member>
+        <member name="M:Plisky.Diagnostics.IBilgeMessageHandler.CleanUpResources">
+            <summary>
+            This is a custom dispose implementation because the internals will call dispose but
+            that causes FxCop style rules therefore this method is used to clear resources instead.
+            </summary>
+        </member>
+        <member name="T:Plisky.Diagnostics.MessageParts">
+            <summary>
+            Holds all of the parts that are used to create messages.
+            </summary>
+        </member>
+        <member name="F:Plisky.Diagnostics.TraceMessageFormat.IS_VALID_TEXTSTRING_REGEX">
+            <summary>
+            This regex will match if the string that is tested against it is a fully qualified and valid Tex String, it will attempt to fail any non valid tex
+            strings.
+            </summary>
+        </member>
+        <member name="M:Plisky.Diagnostics.TraceMessageFormat.IsTexString(System.String)">
+            <summary>
+            This method will check the passed string to see if the string passed is not a tex string, it is optimised to fail as soon as possible therefore only guarantees
+            that the string passed does not look like a tex string
+            </summary>
+            <param name="theString">The string to verify whether its tex compatible or not</param>
+        </member>
+        <member name="M:Plisky.Diagnostics.TraceMessageFormat.ReturnPartsOfStringLegacy(System.String,System.String@,System.String@,System.String@,System.String@,System.String@,System.String@,System.String@)">
+             <summary>
+             This identifys the internal structure of the trace message.  The helper functions here
+             depend on this internal structure and are all kept here.  There should be no dependance
+             on the structure of the string outside of thsi class.
+            
+             {[MACHINENAME][PROCESSID][THREADID][MODULENAME][LINENUMBER][MOREDATA]}#CMD#TEXTOFDEBUGSTRING
+            
+             Where MACHINENAME = Current machine name taken from Environment
+             Where PROCESSID   = The PID assigned to the process that outputed the string
+             where THREADID    = The numeric ID assigned to the OS Thread running the commands
+             where MODULENAME  = The cs filename that was executing the commands
+             where LINENUMBER  = the numeric line number that the debug string was written from
+             NB Future enhancement 1 :
+            
+             </summary>
+        </member>
+        <member name="M:Plisky.Diagnostics.TraceMessageFormat.ReturnPartsOfString(System.String,System.String@,System.String@,System.String@,System.String@,System.String@,System.String@,System.String@,System.String@,System.String@)">
+             <summary>
+             This identifys the internal structure of the trace message.  The helper functions here
+             depend on this internal structure and are all kept here.  There should be no dependance
+             on the structure of the string outside of thsi class.
+            
+             {[MACHINENAME][PROCESSID][THREADID][NETTHREADID][MODULENAME][LINENUMBER][MOREDATA]}#CMD#TEXTOFDEBUGSTRING
+            
+             Where MACHINENAME = Current machine name taken from Environment
+             Where PROCESSID   = The PID assigned to the process that outputed the string
+             where THREADID    = The numeric ID assigned to the OS Thread running the commands
+             where NETTHREADID = The name of the .net thread running the command.
+             where MODULENAME  = The cs filename that was executing the commands
+             where LINENUMBER  = the numeric line number that the debug string was written from
+             where MOREDATA    = this is additional location data, using the form Class::Method when called within Tex.
+             NB Future enhancement 1 :
+            
+             </summary>
+        </member>
+        <member name="M:Plisky.Plumbing.InternalUtil.StackToString">
+            <summary>
+            Primarily an internal function used to generate a stack trace, although available on the public interface for more
+            general usage.  This function creates a stack from the current point in code and will remove all LPSTrace related
+            functions from the resulting stack string.  Therefore the data captured is anything in the call stack from above the
+            T class related functions
+            </summary>
+            <returns>String containing the newly created stack information</returns>
+        </member>
+        <member name="M:Plisky.Plumbing.InternalUtil.LogInternalError(Plisky.Plumbing.InternalUtil.InternalErrorCodes,System.String)">
+            <summary>
+            Called to report an error within Tex, this will attempt to notify
+            the user of an error, by writing to the event log or screen
+            </summary>
+            <param name="tie">InternalErrorCodes enum indicating the error</param>
+            <param name="param">An Additional parameter to describe the error more fully.</param>
+        </member>
+        <member name="M:Plisky.Plumbing.InternalUtil.WriteToEventLog(System.Diagnostics.EventLogEntryType,System.String,System.Int32)">
+            <summary>
+            Attempts to write an error into the application event log, this will try and create the source if the source can not be found
+            but any errors will be masked.  If for some reason we are unable to write to the event log then the exception is swallowed and
+            excecution continues.
+            </summary>
+            <param name="severity">The EvenntLogEntryType level of the message</param>
+            <param name="messsage">The message to write.</param>
+            <param name="number">The number of the error</param>
+        </member>
+        <member name="M:Plisky.Plumbing.InternalUtil.LogInternalError(Plisky.Plumbing.InternalUtil.InternalErrorCodes,System.String,System.Diagnostics.TraceLevel)">
+            <summary>
+            Called to report an error, this will attempt to notify
+            the user of an error, by writing to the event log or screen
+            </summary>
+            <param name="tie">InternalError enum indicating the error</param>
+            <param name="param">An Additional parameter to describe the error more fully.</param>
+            <param name="overrideLevel">Allows you to override the severity</param>
+        </member>
+        <member name="T:Plisky.Plumbing.InternalUtil.InternalErrorCodes">
+            <summary>
+             Enum to describe the errors which can prevent tracing from working correctly.
+            </summary>
+        </member>
+    </members>
+</doc>

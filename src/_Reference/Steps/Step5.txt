@@ -1,0 +1,36 @@
+﻿using Plisky.Boondoggle2;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Boondoggle.Playah {
+
+    /// <summary>
+    /// Amazing Bot is an empty implementation for you to place your bot code into.
+    /// </summary>
+    public class DemoBot : BoonBotBase {
+
+        protected override void BotPrepareForBattle() {
+            // Prepare for battle is called prior to the battle start.
+
+            // Setting a Fanfare message displays your own personal message
+            this.FanfareMessage = "Geronimo.......";
+
+            // The minimum equipment you would need is a Scanner, A PowerPack and Weapon, check the documentation
+            // for all of the possible types of weaponry, powerpacks and scanners that are available.
+            InstallEquipment(KnownEquipmentIds.DefaultScanner, "MyScanner", MountPoint.Internal);
+            InstallEquipment(KnownEquipmentIds.DefaultPowerpack, "PowerPack", MountPoint.Internal);
+            InstallEquipment(KnownEquipmentIds.WeaponType_Rifle_Instance_1, "Rifle", MountPoint.Turret);
+        }
+
+        protected override void BotTakeAction(int turn, int tick, LastTickRecord ltr) {
+            // TODO: Implement actual Actions
+        }
+
+        protected override void BotTurnStartAction(int turn) {
+            // TODO: Optional - Implement Turn Start Initialisation
+        }
+    }
+}

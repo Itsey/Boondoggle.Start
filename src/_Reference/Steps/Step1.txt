@@ -1,0 +1,22 @@
+﻿namespace Boondoggle.Playah {
+
+    using Plisky.Boondoggle2;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+
+    /// <summary>
+    /// Amazing Bot is an empty implementation for you to place your bot code into.
+    /// </summary>
+    public class MyAmazingDrone : DroneControlUnitBase {
+
+        protected override void DroneTakeAction(int turn, int tick, LastTickRecord ltr) {
+            // TODO: Implement actual Actions
+        }
+
+
+        public MyAmazingDrone() : base("YOUR-DRONE-NAME-HERE", "1.0.0.0") { }
+    }
+}
